@@ -4,25 +4,24 @@ from collections import deque  # import deque from the collections module for ef
 
 # define the word ladder function with start and end words, and optional dictionary file
 def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
-    with open(dictionary_file, 'r') as f:  # open the dictionary file in read mode
-        words = [line.strip() for line in f]  # read each line and strip trailing whitespace
-    if end_word not in words:  # check if the end word is in the list of words
-        return None  # if not, return None
-    if start_word == end_word:  # check if the start word is the same as the end word
-        return [start_word]  # if so, return a list with the start word as the only element
-    ladder = deque([[start_word]])  # create a deque containing a list with the start word as the only element
-    while ladder:  # loop until the ladder is empty
-        path = ladder.popleft()  # get the next path from the ladder
-        last_word = path[-1]  # get the last word in the path
-        for word in words:  # loop through the remaining words in the dictionary
-            if word not in path and _adjacent(last_word, word):  # check if the word is adjacent to the last word in the path and not already in the path
-                if word == end_word:  # if the word is the end word, return the path plus the end word
+    with open(dictionary_file, 'r') as f:
+        words = [line.strip() for line in f]
+    if end_word not in words:
+        return None
+    if start_word == end_word:
+        return [start_word]
+    ladder = deque([[start_word]])
+    while ladder:
+        path = ladder.popleft()
+        last_word = path[-1]
+        for word in words[:]:
+            if word not in path and _adjacent(last_word, word):
+                if word == end_word:
                     return path + [end_word]
-                else:  # otherwise, add a new path with the word appended to the end to the ladder
-                    ladder.append(copy.deepcopy(path) + [word])  # create a deep copy of the path list and append the new word to it
-                    words.remove(word)  # remove the word from the list of remaining words in the dictionary to prevent cycles in the ladder
-    return None  # if the ladder is empty and the end word has not been found, return None
-
+                else:
+                    ladder.append(copy.deepcopy(path) + [word])
+                    words.remove(word)
+    return None
 # define the verify word ladder function to check if a word ladder is valid
 def verify_word_ladder(ladder):
     if len(ladder) == 1:
